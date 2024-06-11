@@ -23,6 +23,12 @@ class UserService {
             .digest("hex");
         return hashedPassword;
     }
+    static getUserById(id) {
+        return db_1.prismaClient.user.findUnique({ where: { id } });
+    }
+    static decodeJWTToken(token) {
+        return jsonwebtoken_1.default.verify(token, JWT_SECRET);
+    }
     static getUserByEmail(email) {
         return db_1.prismaClient.user.findUnique({ where: { email } });
     }

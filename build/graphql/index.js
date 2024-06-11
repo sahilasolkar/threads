@@ -16,6 +16,7 @@ function createApolloGraphqlServer() {
         //create graphql server
         const gqlServer = new server_1.ApolloServer({
             typeDefs: `
+    ${user_1.User.typeDefs}
   type Query {
     ${user_1.User.queries}
   }

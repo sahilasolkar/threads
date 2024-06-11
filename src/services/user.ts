@@ -25,6 +25,14 @@ class UserService {
     return hashedPassword;
   }
 
+  public static getUserById(id: string) {
+    return prismaClient.user.findUnique({ where: { id } });
+  }
+
+  public static decodeJWTToken(token: string) {
+    return JWT.verify(token, JWT_SECRET);
+  }
+
   private static getUserByEmail(email: string) {
     return prismaClient.user.findUnique({ where: { email } });
   }
