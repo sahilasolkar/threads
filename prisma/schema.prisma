@@ -4,6 +4,9 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+// command to remigrate changes to postgres - 
+// npx prisma migrate dev --name define-your-changes
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,7 +19,7 @@ datasource db {
 model User {
   id String @id @default(uuid())
   firstName String @map("first_name")
-  lastName String @map("last_name")
+  lastName String? @map("last_name")
   profileImageURL String? @map("profile_image_url")
   email String @unique
   password String 
