@@ -25,5 +25,64 @@ model User {
   password String 
   salt String
 
+  posts Post[] @relation("UserPosts")
+  comments Comment[] @relation("UserComments")
+  likes Like[] @relation("UserLikes")
+  following Follow[] @relation("Followees")
+  followers Follow[] @relation("Followers")
+
   @@map("users")
+}
+
+model Follow{
+  id String @id @default(uuid())
+  followerId String
+  followeeId String
+  createdAt DateTime @default(now())
+
+  follower User @relation("Followers", fields: [followerId], references: [id])
+  followee User @relation("Followees", fields: [followeeId], references: [id])
+
+  @@map("follow")
+}
+
+model Post {
+  id String @id @default(uuid())
+  content String
+  imageURL String
+  createdAt DateTime @default(now())
+  userId String
+
+  user User @relation("UserPosts",fields: [userId], references: [id])
+  comments Comment[] @relation("PostComments")
+  likes Like[] @relation("PostLikes")
+
+  @@map("posts")
+}
+
+model Comment {
+  id String @id @default(uuid())
+  content String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  postId String
+  userId String
+
+  post Post @relation("PostComments",fields: [postId], references: [id])
+  user User @relation("UserComments",fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Like{
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  postId String
+  userId String
+  
+  user User @relation("UserLikes",fields: [userId], references: [id])
+  post Post @relation("PostLikes",fields: [postId], references: [id])
+
+  @@map("likes")
 }

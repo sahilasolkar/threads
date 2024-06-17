@@ -68,7 +68,7 @@ class UserService {
       throw new Error("Incorrect Password");
 
     // Gen token
-    const token = JWT.sign({ email: user.email, id: user.id }, JWT_SECRET);
+    const token = JWT.sign({ email: user.email, id: user.id, firstName: user.firstName }, JWT_SECRET);
     return token;
   }
 }
