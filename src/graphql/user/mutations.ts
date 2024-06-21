@@ -4,4 +4,5 @@ export const mutations = `#graphql
   createComment(content: String!, postId: String!): Comment
   likePost(postId: String!): Like
   followUser(followeeId: ID!): Follow!
+  unfollowUser(followeeId: ID!): Boolean
 `;

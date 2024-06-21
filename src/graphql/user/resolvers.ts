@@ -1,5 +1,8 @@
+import { User } from ".";
 import { prismaClient } from "../../lib/db";
-import commentService from "../../services/comment";
+import commentService, {
+  getCommentByPostIdPayload,
+} from "../../services/comment";
 import FollowService from "../../services/follow";
 import likeService from "../../services/like";
 import PostService, { createPostPayload } from "../../services/post";
@@ -48,7 +51,6 @@ const queries = {
       const following = await FollowService.getfollowingService(
         context.user.id
       );
-      console.log(following.map((follow) => follow.followee));
       return following?.map((follow) => follow.followee);
     }
     throw new Error("Unauthorised");
@@ -56,8 +58,51 @@ const queries = {
 
   getFollowers: async (_: any, parameters: any, context: any) => {
     const follower = await FollowService.getFollowersService(context.user.id);
-    console.log(follower);
     return follower?.map((follow) => follow.follower);
+  },
+  getFeed: async (_: any, parameters: any, context: any) => {
+    if (context && context.user) {
+      const following = await FollowService.getfollowingService(
+        context.user.id
+      );
+
+      const followeeIds = following.map((follow) => follow.followeeId);
+
+      const posts = await prismaClient.post.findMany({
+        where: {
+          userId: {
+            in: followeeIds,
+          },
+        },
+        include: {
+          user: true,
+          comments: {
+            include: { user: true },
+          },
+          likes: true,
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      return posts;
+    }
+
+    throw new Error("Unauthorised");
+  },
+
+  // comment resolver queries
+
+  getCommentByPostId: async (
+    _: any,
+    { postId }: { postId: string },
+    context: any
+  ) => {
+    if (context && context.user) {
+      const comment = await commentService.getCommentByPostIdService({
+        postId,
+      });
+      return comment;
+    }
+    throw new Error("Unauthorised")
   },
 };
 const mutations = {
@@ -116,6 +161,23 @@ const mutations = {
       });
 
       return follow;
+    }
+
+    throw new Error("Unauthorised");
+  },
+
+  unfollowUser: async (
+    _: any,
+    { followeeId }: { followeeId: string },
+    context: any
+  ) => {
+    if (context && context.user) {
+      const follow = await FollowService.unfollowUserService({
+        followeeId,
+        followerId: context.user.id,
+      });
+
+      return true;
     }
 
     throw new Error("Unauthorised");

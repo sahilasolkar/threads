@@ -21,6 +21,21 @@ class FollowService {
     });
   }
 
+  public static unfollowUserService({
+    followeeId,
+    followerId,
+  }: {
+    followeeId: string;
+    followerId: string;
+  }) {
+    return prismaClient.follow.deleteMany({
+      where: {
+        followerId,
+        followeeId,
+      },
+    });
+  }
+
   public static getfollowingService(userId: string) {
     return prismaClient.follow.findMany({
       where: { followerId: userId },

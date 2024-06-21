@@ -14,5 +14,14 @@ class commentService {
             include: { user: true, post: true },
         });
     }
+    static getCommentByPostIdService(payload) {
+        const { postId } = payload;
+        return db_1.prismaClient.comment.findMany({
+            where: { postId },
+            include: {
+                user: true,
+            },
+        });
+    }
 }
 exports.default = commentService;

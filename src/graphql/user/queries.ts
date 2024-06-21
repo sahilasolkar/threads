@@ -5,4 +5,6 @@ export const queries = `#graphql
   getPostById: [Post!]
   getFollowing: [User!]
   getFollowers: [User!]
+  getFeed: [Post!]
+  getCommentByPostId(postId: String!) : [Comment!]
 `;

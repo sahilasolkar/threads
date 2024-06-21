@@ -14,6 +14,14 @@ class FollowService {
             },
         });
     }
+    static unfollowUserService({ followeeId, followerId, }) {
+        return db_1.prismaClient.follow.deleteMany({
+            where: {
+                followerId,
+                followeeId,
+            },
+        });
+    }
     static getfollowingService(userId) {
         return db_1.prismaClient.follow.findMany({
             where: { followerId: userId },

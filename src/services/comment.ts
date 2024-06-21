@@ -7,6 +7,10 @@ export interface createCommentPayload {
   postId: string;
 }
 
+export interface getCommentByPostIdPayload {
+  postId: string;
+}
+
 class commentService {
   public static createCommentService(payload: createCommentPayload) {
     const { content, postId, userId } = payload;
@@ -18,6 +22,17 @@ class commentService {
         updatedAt: new Date(),
       },
       include: { user: true, post: true },
+    });
+  }
+
+  public static getCommentByPostIdService(payload: getCommentByPostIdPayload) {
+    const { postId } = payload;
+
+    return prismaClient.comment.findMany({
+      where: { postId },
+      include: {
+        user: true,
+      },
     });
   }
 }

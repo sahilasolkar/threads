@@ -16,11 +16,16 @@ const express_1 = __importDefault(require("express"));
 const graphql_1 = __importDefault(require("./graphql"));
 const express4_1 = require("@apollo/server/express4");
 const user_1 = __importDefault(require("./services/user"));
+const cors_1 = __importDefault(require("cors"));
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         const app = (0, express_1.default)();
         const PORT = Number(process.env.PORT) || 8000;
         app.use(express_1.default.json());
+        app.use((0, cors_1.default)({
+            origin: "http://localhost:3000", // Frontend URL
+            credentials: true, // If you need to allow cookies or other credentials
+        }));
         app.get("/", (req, res) => {
             res.json({ message: "server is up and running" });
         });

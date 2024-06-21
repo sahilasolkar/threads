@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolvers = void 0;
+const db_1 = require("../../lib/db");
 const comment_1 = __importDefault(require("../../services/comment"));
 const follow_1 = __importDefault(require("../../services/follow"));
 const like_1 = __importDefault(require("../../services/like"));
@@ -52,15 +53,46 @@ const queries = {
     getFollowing: (_, parameters, context) => __awaiter(void 0, void 0, void 0, function* () {
         if (context && context.user) {
             const following = yield follow_1.default.getfollowingService(context.user.id);
-            console.log(following.map((follow) => follow.followee));
             return following === null || following === void 0 ? void 0 : following.map((follow) => follow.followee);
         }
         throw new Error("Unauthorised");
     }),
     getFollowers: (_, parameters, context) => __awaiter(void 0, void 0, void 0, function* () {
         const follower = yield follow_1.default.getFollowersService(context.user.id);
-        console.log(follower);
         return follower === null || follower === void 0 ? void 0 : follower.map((follow) => follow.follower);
+    }),
+    getFeed: (_, parameters, context) => __awaiter(void 0, void 0, void 0, function* () {
+        if (context && context.user) {
+            const following = yield follow_1.default.getfollowingService(context.user.id);
+            const followeeIds = following.map((follow) => follow.followeeId);
+            const posts = yield db_1.prismaClient.post.findMany({
+                where: {
+                    userId: {
+                        in: followeeIds,
+                    },
+                },
+                include: {
+                    user: true,
+                    comments: {
+                        include: { user: true },
+                    },
+                    likes: true,
+                },
+                orderBy: { createdAt: "desc" },
+            });
+            return posts;
+        }
+        throw new Error("Unauthorised");
+    }),
+    // comment resolver queries
+    getCommentByPostId: (_1, _a, context_1) => __awaiter(void 0, [_1, _a, context_1], void 0, function* (_, { postId }, context) {
+        if (context && context.user) {
+            const comment = yield comment_1.default.getCommentByPostIdService({
+                postId,
+            });
+            return comment;
+        }
+        throw new Error("Unauthorised");
     }),
 };
 const mutations = {
@@ -78,7 +110,7 @@ const mutations = {
         }
     }),
     // comment resolver mutations
-    createComment: (_1, _a, context_1) => __awaiter(void 0, [_1, _a, context_1], void 0, function* (_, { postId, content }, context) {
+    createComment: (_2, _b, context_2) => __awaiter(void 0, [_2, _b, context_2], void 0, function* (_, { postId, content }, context) {
         if (context && context.user) {
             const comment = yield comment_1.default.createCommentService({
                 content,
@@ -89,7 +121,7 @@ const mutations = {
         }
         throw new Error("Unauthroized");
     }),
-    likePost: (_2, _b, context_2) => __awaiter(void 0, [_2, _b, context_2], void 0, function* (_, { postId }, context) {
+    likePost: (_3, _c, context_3) => __awaiter(void 0, [_3, _c, context_3], void 0, function* (_, { postId }, context) {
         if (context && context.user) {
             const like = yield like_1.default.likePostService({
                 postId,
@@ -100,13 +132,23 @@ const mutations = {
         throw new Error("Unauthorised");
     }),
     // follower and followee resolver mutations
-    followUser: (_3, _c, context_3) => __awaiter(void 0, [_3, _c, context_3], void 0, function* (_, { followeeId }, context) {
+    followUser: (_4, _d, context_4) => __awaiter(void 0, [_4, _d, context_4], void 0, function* (_, { followeeId }, context) {
         if (context && context.user) {
             const follow = yield follow_1.default.followUserService({
                 followeeId,
                 followerId: context.user.id,
             });
             return follow;
+        }
+        throw new Error("Unauthorised");
+    }),
+    unfollowUser: (_5, _e, context_5) => __awaiter(void 0, [_5, _e, context_5], void 0, function* (_, { followeeId }, context) {
+        if (context && context.user) {
+            const follow = yield follow_1.default.unfollowUserService({
+                followeeId,
+                followerId: context.user.id,
+            });
+            return true;
         }
         throw new Error("Unauthorised");
     }),
