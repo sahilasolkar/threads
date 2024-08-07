@@ -7,4 +7,5 @@ export const queries = `#graphql
   getFollowers: [User!]
   getFeed: [Post!]
   getCommentByPostId(postId: String!) : [Comment!]
+  getLikesByPostId(postId: String!) : [Like!]
 `;
