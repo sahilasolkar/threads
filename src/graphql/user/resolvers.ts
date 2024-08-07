@@ -102,7 +102,22 @@ const queries = {
       });
       return comment;
     }
-    throw new Error("Unauthorised")
+    throw new Error("Unauthorised");
+  },
+
+  // likes resolver queries
+  getLikesByPostId: async (
+    _: any,
+    { postId }: { postId: string },
+    context: any
+  ) => {
+    if (context && context.user) {
+      const likes = await likeService.getLikesByPostIdService({
+        postId,
+      });
+      return likes;
+    }
+    throw new Error("Unauthorised");
   },
 };
 const mutations = {
@@ -146,6 +161,16 @@ const mutations = {
       return like;
     }
     throw new Error("Unauthorised");
+  },
+
+  unlikePost: async (_: any, { postId }: { postId: string }, context: any) => {
+    if (context && context.user) {
+      const like = await likeService.unlikePostService({
+        postId,
+        userId: context.user.id,
+      });
+      return like.count;
+    }
   },
 
   // follower and followee resolver mutations
