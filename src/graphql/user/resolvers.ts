@@ -27,6 +27,19 @@ const queries = {
     }
   },
 
+  getUsers: async (_: any, { limit = 5, offset = 5 }: any, context: any) => {
+    if (!context.user) throw new Error("Authentication required");
+    if (context && context.user) {
+      const users = await prismaClient.user.findMany({
+        include: { followers: true },
+        take: limit,
+        skip: offset,
+      });
+      console.log(users);
+      return users;
+    }
+  },
+
   // post resolver queries
   getPosts: async () => {
     const posts = await PostService.getPosts();

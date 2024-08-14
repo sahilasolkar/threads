@@ -8,4 +8,5 @@ export const queries = `#graphql
   getFeed: [Post!]
   getCommentByPostId(postId: String!) : [Comment!]
   getLikesByPostId(postId: String!) : [Like!]
+  getUsers(limit: Int, offset: Int): [User!]
 `;
