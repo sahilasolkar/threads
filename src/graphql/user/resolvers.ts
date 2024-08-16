@@ -27,7 +27,7 @@ const queries = {
     }
   },
 
-  getUsers: async (_: any, { limit = 5, offset = 5 }: any, context: any) => {
+  getUsers: async (_: any, { limit = 20, offset = 0 }: any, context: any) => {
     if (!context.user) throw new Error("Authentication required");
     if (context && context.user) {
       const users = await prismaClient.user.findMany({
@@ -35,7 +35,6 @@ const queries = {
         take: limit,
         skip: offset,
       });
-      console.log(users);
       return users;
     }
   },
