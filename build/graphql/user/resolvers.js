@@ -34,7 +34,7 @@ const queries = {
             return user;
         }
     }),
-    getUsers: (_1, _a, context_1) => __awaiter(void 0, [_1, _a, context_1], void 0, function* (_, { limit = 5, offset = 5 }, context) {
+    getUsers: (_1, _a, context_1) => __awaiter(void 0, [_1, _a, context_1], void 0, function* (_, { limit = 20, offset = 0 }, context) {
         if (!context.user)
             throw new Error("Authentication required");
         if (context && context.user) {
@@ -43,7 +43,6 @@ const queries = {
                 take: limit,
                 skip: offset,
             });
-            console.log(users);
             return users;
         }
     }),
