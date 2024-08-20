@@ -32,6 +32,7 @@ export const typeDefs = `#graphql
 
   type Like {
     id: ID!
+    createdAt: String!
     user: User!
     post: Post!
   }
