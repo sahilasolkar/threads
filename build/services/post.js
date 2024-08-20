@@ -34,12 +34,8 @@ class PostService {
             where: { userId: id },
             include: {
                 user: true,
-                likes: {
-                    include: {
-                        user: true,
-                    },
-                },
-                comments: true,
+                likes: { include: { user: true } },
+                comments: { include: { user: true } },
             },
         });
     }
